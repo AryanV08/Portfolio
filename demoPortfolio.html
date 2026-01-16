@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aryan Verma | Software Engineer</title>
+    
+    <!-- Fonts: Inter & Space Grotesk for that "Tech" feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        'ai-black': '#050507',
+                        'ai-surface': '#0F1115',
+                        'ai-accent': '#10b981', // Emerald Green
+                        'light-surface': '#ffffff',
+                        'light-bg': '#f3f4f6'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Dark Mode Default */
+        .dark body {
+            background-color: #050507;
+            color: #ffffff;
+        }
+
+        /* Light Mode */
+        body {
+            background-color: #f9fafb;
+            color: #111827;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #333;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Glassmorphism Utilities */
+        /* Dark Mode Glass */
+        .dark .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .dark .glass-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Light Mode Glass */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .glass-card {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Hover Effects - UPDATED TO GREEN */
+        .glass-card:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px -10px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Animated Grain Background */
+        .bg-grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        .dark .bg-grain {
+            opacity: 0.04;
+        }
+
+        /* Scanline Effect (Gamified) */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 40;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0) 50%,
+                rgba(0, 0, 0, 0.02) 50%,
+                rgba(0, 0, 0, 0.02)
+            );
+            background-size: 100% 4px;
+            opacity: 0.6;
+        }
+        .dark .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0),
+                rgba(0, 0, 0, 0) 50%,
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.2)
+            );
+        }
+
+        /* Glow effects - UPDATED TO GREEN */
+        .glow-point {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            /* Reduced opacity from 0.2 to 0.08 for a much subtler effect */
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(0,0,0,0) 60%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+        }
+        .dark .glow-point {
+            mix-blend-mode: normal;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- Gamified Backgrounds -->
+    <canvas id="bg-canvas" class="fixed inset-0 z-0"></canvas>
+    <div class="scanlines"></div>
+    <div class="bg-grain"></div>
+
+    <!-- Mouse Follower Glow -->
+    <div id="cursor-glow" class="glow-point fixed hidden md:block z-10"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-40 backdrop-blur-lg border-b border-gray-200 dark:border-white/5 bg-white/70 dark:bg-black/50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+                AV.
+            </a>
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-600 dark:text-gray-400">
+                <a href="#about" class="hover:text-black dark:hover:text-white transition-colors">About</a>
+                <a href="#experience" class="hover:text-black dark:hover:text-white transition-colors">Experience</a>
+                <a href="#projects" class="hover:text-black dark:hover:text-white transition-colors">Projects</a>
+                <a href="#contact" class="hover:text-black dark:hover:text-white transition-colors">Contact</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <!-- Dark Mode Toggle Button -->
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 transition-colors text-gray-600 dark:text-gray-300" aria-label="Toggle Dark Mode">
+                    <!-- Sun Icon (shown in dark mode) -->
+                    <svg id="sun-icon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <!-- Moon Icon (shown in light mode) -->
+                    <svg id="moon-icon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <a href="mailto:aryan08@uw.edu" class="px-4 py-2 text-xs font-semibold tracking-wide text-white dark:text-black bg-black dark:bg-white rounded-full hover:bg-emerald-600 dark:hover:bg-emerald-500 hover:text-white dark:hover:text-white transition-all transform hover:scale-105">
+                    LET'S TALK
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+            <div class="inline-block mb-4 px-3 py-1 rounded-full glass-panel text-xs text-emerald-600 dark:text-emerald-400 font-medium tracking-wider uppercase opacity-0 hero-anim">
+                University of Washington • CS '26
+            </div>
+            <h1 class="font-display text-6xl md:text-8xl font-bold tracking-tighter mb-6 leading-tight text-gray-900 dark:text-white">
+                <span class="hero-anim opacity-0 block">Aryan Verma</span>
+                <span class="hero-anim opacity-0 block text-gray-500 dark:text-gray-600 text-4xl md:text-6xl mt-2">Building the Future.</span>
+            </h1>
+            <p class="hero-anim opacity-0 max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400 mb-10 leading-relaxed">
+                Senior Computer Science student crafting seamless digital experiences at the intersection of full-stack engineering and AI.
+            </p>
+            <div class="hero-anim opacity-0 flex flex-col md:flex-row gap-4 justify-center items-center">
+                <a href="#projects" class="group relative px-8 py-3 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-full overflow-hidden">
+                    <span class="relative z-10 group-hover:text-white transition-colors duration-300">View Work</span>
+                    <div class="absolute inset-0 bg-emerald-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out"></div>
+                </a>
+                <a href="https://github.com/Aryan" target="_blank" class="px-8 py-3 glass-panel rounded-full text-gray-900 dark:text-white font-medium hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center gap-2">
+                    <span>GitHub</span>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce opacity-50 z-20">
+            <svg class="w-6 h-6 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </div>
+    </section>
+
+    <!-- Experience Section (Timeline) -->
+    <section id="experience" class="py-24 relative z-10">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="font-display text-3xl md:text-4xl font-bold mb-16 text-center text-gray-900 dark:text-white reveal-on-scroll">Experience</h2>
+            
+            <div class="relative border-l border-gray-300 dark:border-white/10 ml-4 md:ml-0 md:pl-0 space-y-12">
+                
+                <!-- Item 1: Propper AI -->
+                <div class="relative pl-8 md:pl-0 reveal-on-scroll">
+                    <!-- Dot -->
+                    <div class="absolute -left-[5px] top-2 w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                    
+                    <div class="md:grid md:grid-cols-12 md:gap-8 group">
+                        <div class="md:col-span-3 mb-2 md:mb-0 md:text-right">
+                            <p class="text-sm text-gray-500 dark:text-gray-400 font-mono">Oct 2025 - Present</p>
+                        </div>
+                        <div class="md:col-span-9 glass-card p-6 rounded-2xl">
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Software Engineer Intern</h3>
+                            <h4 class="text-lg text-gray-600 dark:text-gray-300 mb-4">Propper AI • Seattle, WA</h4>
+                            <ul class="space-y-2 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                                <li class="flex items-start">
+                                    <span class="mr-2 text-emerald-500">▹</span>
+                                    Integrated Salesforce Lightning Web Components with Apex & REST APIs to power the DocGen platform.
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="mr-2 text-emerald-500">▹</span>
+                                    Built a template-to-CRM object mapping system using a dual-list UI for enterprise admins.
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="mr-2 text-emerald-500">▹</span>
+                                    Designed an admin console for managing document automation workflows and template parsing.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2: Avid Hotel -->
+                <div class="relative pl-8 md:pl-0 reveal-on-scroll">
+                     <!-- Dot -->
+                     <div class="absolute -left-[5px] top-2 w-3 h-3 rounded-full bg-gray-400 dark:bg-gray-700"></div>
+
+                    <div class="md:grid md:grid-cols-12 md:gap-8 group">
+                        <div class="md:col-span-3 mb-2 md:mb-0 md:text-right">
+                            <p class="text-sm text-gray-500 dark:text-gray-400 font-mono">Jun 2025 - Sep 2025</p>
+                        </div>
+                        <div class="md:col-span-9 glass-card p-6 rounded-2xl opacity-80 hover:opacity-100 transition-opacity">
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Front Desk Representative</h3>
+                            <h4 class="text-lg text-gray-600 dark:text-gray-300 mb-4">Avid Hotel • Wenatchee, WA</h4>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">
+                                Managed guest relations and consistently ranked #1 in employee rankings for loyalty program sign-ups. Demonstrated strong communication and problem-solving skills under pressure.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section (Bento Grid) -->
+    <section id="projects" class="py-24 relative bg-gray-50/50 dark:bg-black/30 transition-colors duration-300 z-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal-on-scroll">
+                <div>
+                    <h2 class="font-display text-3xl md:text-4xl font-bold mb-2 text-gray-900 dark:text-white">Featured Projects</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Innovation through code.</p>
+                </div>
+                <a href="https://github.com/Aryan" class="hidden md:inline-block text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-white transition-colors">View all on GitHub &rarr;</a>
+            </div>
+
+            <!-- Bento Grid - UPDATED LAYOUT -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+                
+                <!-- Project 1: Chrome Extension (Large - spans 2 cols) -->
+                <div class="md:col-span-2 glass-card rounded-3xl p-8 relative overflow-hidden group reveal-on-scroll cursor-pointer">
+                    <div class="absolute top-0 right-0 p-6 opacity-30 dark:opacity-50 group-hover:opacity-100 transition-opacity text-black dark:text-white">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    </div>
+                    <div class="h-full flex flex-col justify-end relative z-10">
+                        <div class="bg-emerald-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/30">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">CookiesShallNotPass</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm max-w-md">A privacy-focused Chrome Extension that suppresses cookie banners and visualizes tracker data. Features a custom analytics pipeline and strict preference enforcement.</p>
+                        <div class="flex gap-2">
+                            <span class="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-xs border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300">JavaScript</span>
+                            <span class="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-xs border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300">Chrome API</span>
+                            <span class="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-xs border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300">HTML/CSS</span>
+                        </div>
+                    </div>
+                    <!-- Background decoration -->
+                    <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/10 dark:bg-emerald-600/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 dark:group-hover:bg-emerald-600/20 transition-all duration-500"></div>
+                </div>
+
+                <!-- Project 3: Only Direction (Moved up - spans 1 col) -->
+                <div class="glass-card rounded-3xl p-8 relative overflow-hidden group reveal-on-scroll">
+                     <div class="h-full flex flex-col justify-between relative z-10">
+                        <div>
+                            <div class="bg-purple-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:-translate-y-1 transition-transform shadow-lg shadow-purple-500/30">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Only Direction</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">A platformer game built in Godot. Designed complex levels using GDScript.</p>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-xs border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300">Godot</span>
+                            <span class="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-xs border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300">GDScript</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2: Odyssey Hydration (Expanded - spans 2 cols) -->
+                <div class="md:col-span-2 glass-card rounded-3xl p-8 relative overflow-hidden group reveal-on-scroll">
+                    <div class="absolute top-0 right-0 p-6 opacity-30 dark:opacity-50 group-hover:opacity-100 transition-opacity text-black dark:text-white">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <div class="h-full flex flex-col justify-between relative z-10">
+                        <div>
+                            <div class="bg-teal-600 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:rotate-12 transition-transform shadow-lg shadow-teal-500/30">
+                                <!-- Hydroflask Style Icon -->
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <!-- Bottle Body -->
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10v11a2 2 0 01-2 2H9a2 2 0 01-2-2V8z"></path>
+                                    <!-- Neck/Cap Area -->
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8V6a1 1 0 011-1h4a1 1 0 011 1v2"></path>
+                                    <!-- Flexible Strap/Handle -->
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5c0-1.5-1.5-2-3-2s-3 .5-3 2"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Odyssey Hydration</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm max-w-xl">
+                                Co-founded and led a student startup selling custom laser-engraved water bottles featuring Seattle landmarks. 
+                                Orchestrated the entire product lifecycle from engineering the engraving process to marketing and sales, delivering a profitable product sold at major local events.
+                            </p>
+                        </div>
+                        <div class="mt-4 flex gap-2">
+                            <span class="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-xs border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300">Founder/CEO</span>
+                            <span class="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-xs border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300">Engineering</span>
+                            <span class="px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-xs border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300">Sales</span>
+                        </div>
+                    </div>
+                     <!-- Background decoration -->
+                     <div class="absolute -left-10 -bottom-10 w-64 h-64 bg-teal-500/10 dark:bg-teal-600/10 rounded-full blur-3xl group-hover:bg-teal-500/20 dark:group-hover:bg-teal-600/20 transition-all duration-500"></div>
+                </div>
+
+                <!-- Skills Block (Standard - spans 1 col) -->
+                <div class="glass-card rounded-3xl p-8 flex flex-col justify-center reveal-on-scroll">
+                    <h3 class="text-xl font-bold mb-6 text-gray-900 dark:text-gray-200">Tech Stack</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300">Java</span>
+                        <span class="px-3 py-1.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300">Python</span>
+                        <span class="px-3 py-1.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300">React</span>
+                        <span class="px-3 py-1.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300">Node.js</span>
+                        <span class="px-3 py-1.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300">SQL</span>
+                        <span class="px-3 py-1.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300">Apex</span>
+                        <span class="px-3 py-1.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300">Git</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="py-20 border-t border-gray-200 dark:border-white/10 bg-white/70 dark:bg-black/30 backdrop-blur-lg transition-colors duration-300 relative z-10">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="font-display text-4xl md:text-5xl font-bold mb-8 text-gray-900 dark:text-white">Ready to create something extraordinary?</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-10">Currently open for full-time software engineering roles.</p>
+            
+            <a href="mailto:aryan08@uw.edu" class="group relative inline-flex items-center gap-2 px-8 py-4 bg-emerald-600/90 hover:bg-emerald-500 text-white font-bold rounded-full transition-all transform hover:-translate-y-1 shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)]">
+                <span class="relative z-10">Contact Me</span>
+                <svg class="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                <!-- Button Glow Effect -->
+                <div class="absolute inset-0 rounded-full bg-emerald-400 opacity-0 group-hover:opacity-20 blur-md transition-opacity"></div>
+            </a>
+
+            <div class="mt-16 flex justify-center gap-8 text-gray-500 dark:text-gray-400">
+                <a href="https://linkedin.com/in/Aryan" target="_blank" class="hover:text-emerald-600 dark:hover:text-white transition-colors hover:scale-110 transform duration-200">LinkedIn</a>
+                <a href="https://github.com/Aryan" target="_blank" class="hover:text-emerald-600 dark:hover:text-white transition-colors hover:scale-110 transform duration-200">GitHub</a>
+                <a href="mailto:aryan08@uw.edu" class="hover:text-emerald-600 dark:hover:text-white transition-colors hover:scale-110 transform duration-200">Email</a>
+            </div>
+            
+            <p class="mt-12 text-xs text-gray-400 dark:text-gray-600 font-mono">&copy; 2026 Aryan Verma. Built with HTML, Tailwind & GSAP.</p>
+        </div>
+    </footer>
+
+    <!-- Animations Script -->
+    <script>
+        // --- Canvas Background Animation ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let mouse = { x: null, y: null };
+        
+        // Configuration
+        const particleCount = 60; // Number of nodes
+        const connectionDistance = 150; // Max distance to draw line
+        const mouseRepelDist = 150; // Mouse interaction radius
+
+        // Color Handling
+        let isDark = document.documentElement.classList.contains('dark');
+        // UPDATED COLORS TO GREEN
+        let particleColor = isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)';
+        let lineColor = isDark ? 'rgba(16, 185, 129, 0.2)' : 'rgba(0, 0, 0, 0.05)'; 
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5; // Random velocity X
+                this.vy = (Math.random() - 0.5) * 0.5; // Random velocity Y
+                this.size = Math.random() * 2 + 1;
+            }
+
+            update() {
+                // Move
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Mouse Interaction (Repel)
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < mouseRepelDist) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (mouseRepelDist - distance) / mouseRepelDist;
+                        const directionX = forceDirectionX * force * 2; // Strength
+                        const directionY = forceDirectionY * force * 2;
+                        this.x -= directionX;
+                        this.y -= directionY;
+                    }
+                }
+
+                // Bounce off edges
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = particleColor;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Update and draw particles
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                // Draw lines between close particles
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = lineColor;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+
+        // Event Listeners
+        window.addEventListener('resize', () => {
+            resize();
+            initParticles();
+        });
+        
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        // Initialize Canvas
+        resize();
+        initParticles();
+        animateCanvas();
+
+        // --- Existing Code ---
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        
+        function updateCanvasTheme() {
+            isDark = htmlElement.classList.contains('dark');
+            particleColor = isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)';
+            // UPDATED LINE COLOR
+            lineColor = isDark ? 'rgba(16, 185, 129, 0.25)' : 'rgba(0, 0, 0, 0.08)';
+        }
+
+        // Check local storage or system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+        updateCanvasTheme(); // Init canvas colors
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.theme = 'dark';
+            } else {
+                localStorage.theme = 'light';
+            }
+            updateCanvasTheme(); // Update canvas colors on toggle
+        });
+
+        // Register ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Mouse Follower Glow Effect (CSS based)
+        const cursorGlow = document.getElementById('cursor-glow');
+        
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursorGlow, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.2,
+                ease: 'power2.out'
+            });
+        });
+
+        // Hero Animations
+        const tl = gsap.timeline();
+        
+        tl.to('.hero-anim', {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: 'power4.out',
+            delay: 0.5
+        });
+
+        // Set initial state for hero items
+        gsap.set('.hero-anim', { y: 20 });
+
+        // Scroll Reveal Animations
+        const revealElements = document.querySelectorAll('.reveal-on-scroll');
+        
+        revealElements.forEach((element) => {
+            gsap.fromTo(element, 
+                { 
+                    opacity: 0, 
+                    y: 50 
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: element,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                }
+            );
+        });
+
+        // Magnetic Button Effect
+        const magneticBtns = document.querySelectorAll('.glass-card');
+        
+        magneticBtns.forEach((btn) => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                // Subtle tilt effect
+                gsap.to(btn, {
+                    rotationY: x * 0.05,
+                    rotationX: -y * 0.05,
+                    duration: 0.5,
+                    ease: 'power2.out'
+                });
+            });
+            
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, {
+                    rotationY: 0,
+                    rotationX: 0,
+                    duration: 0.5,
+                    ease: 'elastic.out(1, 0.3)'
+                });
+            });
+        });
+
+    </script>
+</body>
+</html>
